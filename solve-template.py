@@ -17,8 +17,10 @@ inputlines = [x.strip() for x in open(args.file).readlines()]
 # name, val = parser.match(line).groups()
 # val = int(val)
 
+part1, part2 = 0,0
+
 for line in inputlines:
     print(line)
 
-
-    
+print('part1:',part1)
+print('part2:',part2)
