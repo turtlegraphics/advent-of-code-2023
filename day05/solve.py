@@ -10,12 +10,12 @@ import aocutils
 
 args = aocutils.parse_args()
 
-class maprange:
+class MapRange:
     def __init__(self,rstr):
         self.dest, self.source, self.length = [int(x) for x in rstr.strip().split()]
 
     def convert(self, v):
-        if v >= self.source and v < self.source + self.length:
+        if self.source <= v < self.source + self.length:
             return v - self.source + self.dest
         else:
             return -1
@@ -66,10 +66,10 @@ class maprange:
         out += ' --> ' + str(self.dest) + ':' + str(self.dest + self.length -1)
         return out
     
-class map:
+class Map:
     def __init__(self,mapstr):
-        self.ranges = [maprange(s) for s in mapstr[1:]]
-        self.source, dash, self.dest = mapstr[0].split()[0].split('-')
+        self.ranges = [MapRange(s) for s in mapstr[1:]]
+        self.source, _, self.dest = mapstr[0].split()[0].split('-')
 
     def convert(self, v):
         for r in self.ranges:
@@ -94,16 +94,14 @@ class map:
             out += str(r) + '\n'
         return out
     
-intxt = open(args.file).read()
-blocks = intxt.split('\n\n')
+seeds, *blocks = open(args.file).read().split('\n\n')
+seeds = [int(x) for x in seeds.split()[1:]]
 
 maps = {}
 
-seeds = [int(x) for x in blocks[0].split()[1:]]
-
-for b in blocks[1:]:
+for b in blocks:
     lines = b.strip().split('\n')
-    m = map(lines)
+    m = Map(lines)
     maps[m.source] = m
 
 part1 = 10000000000000000000000000
@@ -121,11 +119,6 @@ for s in seeds:
         part1 = x
         
 print('part1:',part1)
-
-#m = maps['seed']
-#test = [    (80,40)    ]
-#result = m.convertlist(test)
-#print('result:',result)
 
 seedranges = []
 for i in range(0,len(seeds),2):
