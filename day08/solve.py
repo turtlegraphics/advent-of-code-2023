@@ -7,7 +7,6 @@
 import sys
 sys.path.append("..")
 import aocutils
-from math import lcm
 
 args = aocutils.parse_args()
 
@@ -15,9 +14,6 @@ inputlines = [x.strip() for x in open(args.file).readlines()]
 
 import re
 parser = re.compile(r"(\w+) = \((\w+), (\w+)\)") # or whatever
-# val = int(val)
-
-part1, part2 = 0,0
 
 map = {}
 map['L'] = {}
@@ -34,16 +30,16 @@ for line in inputlines[2:]:
 
 current = 'AAA'
 spot = 0
+length = 0
 while current != 'ZZZ':
     turn = instructions[spot]
     current = map[turn][current]
     spot = (spot+1) % len(instructions)
-    part1 += 1
+    length += 1
 
-print('part1:',part1)
+print('part1:',length)
 
-lengths = []
-for start in startnodes:
+def triplength(start):
     current = start
     spot = 0
     length = 0
@@ -52,6 +48,7 @@ for start in startnodes:
         current = map[turn][current]
         spot = (spot+1) % len(instructions)
         length += 1
-    lengths.append(length)
+    return length
 
-print('part2:',lcm(*lengths))
+from math import lcm
+print('part2:',lcm(*[triplength(x) for x in startnodes]))
