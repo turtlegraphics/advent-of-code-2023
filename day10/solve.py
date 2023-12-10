@@ -22,7 +22,6 @@ for p in field:
         start = p
     nest[p] = '.'
 
-
 def step(p,d):
     what = field[p]
     if what == '.':
@@ -59,19 +58,21 @@ def step(p,d):
     
     return (p,d)
 
-# for start_d in field._dirs[:4]:
+# my input the start was actually a |,
+# so hard code the start direction
+# 
+
 start_d = (0,-1)
+# for start_d in field._dirs[:4]:
+
 if True:
     p = aocutils.Point(start)
-    print('--')
     d = aocutils.Point(start_d)
-    print ('heading',d)
     steps = 0
     done = False
     while not done:
         nest[p] = field[p]
         try:
-            # print('  ',p)
             (p,d) = step(p,d)
             steps += 1
         except KeyError:
@@ -93,6 +94,7 @@ print('part1:',part1)
 
 part2 = 0
 
+# works for my input, not the test inputs
 nest[start] = '|'
 
 for p in nest:
