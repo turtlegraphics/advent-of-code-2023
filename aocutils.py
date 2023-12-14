@@ -541,16 +541,28 @@ class Grid:
 
         return (dist, prev)
 
+    def __str__(self):
+        """Calls display with defaults."""
+        return self._display(' ',False,'')
+    
     def display(self, blank=' ', vflip = False, sep=''):
         """
-        Display the grid.
+        Display the grid in a customizable manner.
+        
         Always shows a rectangle which is exactly large enough to
         contain all cells with data.
+        
         Blank cells are displayed with a space, unless blank is set.
+        
         By default, higher the y axis increases upwards, like in math.
         If vflip is True, the y axis increases downwards.
+        
         sep is put between each cell
         """
+        print(self._display(blank, vflip, sep))
+        
+    def _display(self, blank, vflip, sep):
+        result = ''
         if vflip:
             rows = range(self.ymin, self.ymax+1)
         else:
@@ -565,8 +577,12 @@ class Grid:
                     out += str(self.raster[(x,y)])
                 else:
                     out += blank
-            print(out)
+            if result != '':
+                result += '\n'
+            result += out
 
+        return result
+    
 class HexGrid(Grid):
     """
     Class representing a hexagonal grid.
@@ -747,7 +763,7 @@ if __name__ == '__main__':
         g[p] = '*'
     nose = Point(0,-1)
     g[nose] = 'U'
-    g.display()
+    print(g)
 
     dotcount = 0
     for p in g:
@@ -767,6 +783,9 @@ if __name__ == '__main__':
     print('here it is upside down and shaded in with .s')
     g.display(blank='.', vflip=True)
 
+    print('here it is in jail')
+    g.display(sep='|')
+
     print('now lets print a little xmas art')
     sleighart = """\
 __     _  __ 
@@ -777,7 +796,7 @@ __     _  __
 """.split('\n')
     sleigh = Grid()
     sleigh.scan(sleighart)
-    sleigh.display()
+    print(sleigh)
     print(sleigh.bounds())
 
     print()
@@ -804,7 +823,7 @@ __     _  __
             maze_start = p
         if maze[p] == 'E':
             maze_end = p
-    maze.display()
+    print(maze)
     maze[maze_start] = ' '
     maze[maze_end] = ' '
     
@@ -825,7 +844,7 @@ __     _  __
     while p:
         solution[p] = str(dist[p])[-1]
         p = prev[p]
-    solution.display()
+    print(solution)
     
     # HexGrid, HexPoint
     print('-'*20)
