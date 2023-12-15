@@ -28,9 +28,9 @@ for step in prog:
 print('part1:',part1)
 
 def printboxes():
-    for i in range(len(boxes)):
-        if boxes[i]:
-            print('Box',i,':',boxes[i])
+    for i,box in enumerate(boxes):
+        if box:
+            print('Box',i,':',box)
 
 boxes = []
 for i in range(256):
@@ -40,27 +40,29 @@ import re
     
 for step in prog:
     label, op, val = re.match(r'([a-z]+)([=-])(.*)',step).groups()
+    if val:
+        val = int(val)
     h = hash(label)
+
     if op == '-':
-        for i in range(len(boxes[h])):
-            (l,v) = boxes[h][i]
+        for i,(l,v) in enumerate(boxes[h]):
             if label == l:
                 boxes[h].pop(i)
                 break
-    else:
+    if op == '=':
         found = False
-        for i in range(len(boxes[h])):
-            (l,v) = boxes[h][i]
+        for i,(l,v) in enumerate(boxes[h]):
             if label == l:
                 boxes[h][i] = (l,val)
-                found = True
                 break
-        if not found:
+        else:
             boxes[h].append((label,val))
 
-for b in range(len(boxes)):
-    for slot in range(len(boxes[b])):
-        (l,v) = boxes[b][slot]
-        part2 += (b+1)*(slot+1)*int(v)
+    # print(step)
+    # printboxes()
+    
+for b,box in enumerate(boxes):
+    for slot,(l,v) in enumerate(box):
+        part2 += (b+1)*(slot+1)*v
         
 print('part2:',part2)
