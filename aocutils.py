@@ -493,7 +493,8 @@ class Grid:
         and you can follow the prev[] path backwards.
 
         * distance_function can weight edges in the graph, by returning
-        the weight/distance from u to v.
+        the weight/distance from u to v. If it returns None, there is no
+        path from u to v.
         """
 
         sx,sy = source
@@ -529,7 +530,10 @@ class Grid:
                 v = (v.x,v.y)
                 if v in visited:
                     continue
-                dv = dist[u] + distance_function(u,v) 
+                distuv = distance_function(u,v)
+                if distuv is None:
+                    continue
+                dv = dist[u] + distuv
                 if v in Q:
                     if dv < dist[v]:
                         dist[v] = dv
