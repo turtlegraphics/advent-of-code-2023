@@ -7,8 +7,6 @@
 #   Number theoretic functions
 #   Progress bar (just tqdm, actually)
 
-from tqdm import tqdm  # progress bar
-
 import argparse
 import math
 import functools
@@ -659,13 +657,14 @@ if __name__ == '__main__':
     print()
         
     # Progress bar
-    print('-'*20)
-    print("Progress bar")
-    print('-'*20)
-    from time import sleep
-    for i in tqdm(range(75)):
-        sleep(0.01)
-    print()
+    # Requires tqdm and I don't want that to cause installation problems (which it did)
+    #print('-'*20)
+    #print("Progress bar")
+    #print('-'*20)
+    #from time import sleep
+    #for i in tqdm(range(75)):
+    #    sleep(0.01)
+    #print()
     
     # Number Theory
     print('-'*20)
