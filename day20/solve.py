@@ -5,6 +5,7 @@
 # Day 20
 #
 import sys
+sys.path.append("..")
 import aocutils
 
 args = aocutils.parse_args()
