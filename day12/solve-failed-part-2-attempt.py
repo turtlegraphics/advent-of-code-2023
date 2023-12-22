@@ -7,6 +7,7 @@
 import sys
 sys.path.append("..")
 import aocutils
+from aocutils import debug
 
 args = aocutils.parse_args()
 
@@ -20,10 +21,9 @@ inputlines = [x.strip() for x in open(args.file).readlines()]
 ibout = {True: 'in block', False:'not in b'}
 
 def ways(springs, counts, inblock, depth):
-    # print(' '*depth + springs, '(', ibout[inblock], ')',counts)
+    debug(' '*depth + springs, '(', ibout[inblock], ')',counts)
     if springs == '':
         if (len(counts) == 0) or (len(counts) == 1 and counts[0] == 0):
-            # print('got one')
             return 1
         else:
             return 0
@@ -53,12 +53,50 @@ def ways(springs, counts, inblock, depth):
 
 part1, part2 = 0,0
 
-for line in inputlines:
-    springs, counts = line.split()
-    counts = [int(x) for x in counts.split(',')]
-    part1 += ways(springs, counts, inblock=False, depth = 0)
+def findnearmiddle(springs, c):
+    middle = len(springs)//2
+    f1 = springs.find(c, middle)
+    f2 = springs.rfind(c, 0, middle)
+    if f1 == -1:
+        return f2
+    if f2 == -1:
+        return f1
+    if f1-middle < middle-f2:
+        return f1
+    return f2
+    
+def dac(springs, counts):
+    debug('dac',springs,counts)
+    if len(springs) < 8:
+        # just do it the old way
+        return ways(springs, counts, inblock=False, depth = 0)
+    # find a ? near the middle
+    split = findnearmiddle(springs,'?')
+    if split == -1:
+        # no ? left, do it the old way
+        return ways(springs, counts, inblock=False, depth = 0)
+    front = springs[:split]
+    back = springs[split+1:]
+    # assert(front + '?' + back == springs)
 
-print('part1:',part1)
+    debug('split at',split, front+'!'+back)
+    
+    # hard way
+    space = 0
+    for i in range(len(counts)+1):
+        w2 = 0
+        w1 = dac(front, counts[:i])
+        if w1 > 0:
+            w2 = dac(back, counts[i:])
+            
+        debug('  +',w1*w2,'=',w1,'*',w2)
+        space += w1*w2
+    
+    # easy way
+    sharp = dac(front + '#' + back, counts)
+    return sharp + space
+
+# print('dac result',dac('??????',[1,3,1]))
 
 l = 0
 ls = len(inputlines)
@@ -69,6 +107,6 @@ for line in inputlines:
     springs = s + '?' + s + '?' + s + '?' + s + '?' + s
     counts  = c + ',' + c + ',' + c + ',' + c + ',' + c
     counts = [int(x) for x in counts.split(',')]
-    part2 += ways(springs, counts, inblock=False, depth = 0)
+    part2 += dac(springs,counts)
 
 print('part2:',part2)
