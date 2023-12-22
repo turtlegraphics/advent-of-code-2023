@@ -3,10 +3,21 @@
 # Bryan Clair
 #
 # Utilities, including:
-#   Point and Grid classes and various derivations
-#   Number theoretic functions
-#   Progress bar (just tqdm, actually)
-
+#   * Argument parsing
+#   * Memoization
+#   * Point classes
+#      Point
+#      Point3D
+#      Turtle
+#      HexPoint
+#   * Grid classes
+#      Grid
+#      HexGrid
+#   * Number theoretic functions:
+#      chinese_remainder theorem
+#      mul_inv - multiplicative inverse in modular arithmetic
+#   * ZSubset class to effeciently hold arbitrary subsets of the integers
+#   
 import argparse
 import math
 import functools
@@ -63,6 +74,35 @@ def debug(*args,**kwargs):
     """Hacky debug print function."""
     if _verbosity_level > 0:
         print(*args,**kwargs)
+
+from collections.abc import Hashable
+from functools import partial
+class memoized(object):
+   '''Decorator. Caches a function's return value each time it is called.
+   If called later with the same arguments, the cached value is returned
+   (not reevaluated).
+   '''
+   def __init__(self, func):
+      self.func = func
+      self.cache = {}
+   def __call__(self, *args):
+      if not isinstance(args, Hashable):
+         # uncacheable. a list, for instance.
+         # better to not cache than blow up.
+         return self.func(*args)
+      if args in self.cache:
+         return self.cache[args]
+      else:
+         value = self.func(*args)
+         self.cache[args] = value
+         return value
+   def __repr__(self):
+      '''Return the function's docstring.'''
+      return self.func.__doc__
+   def __get__(self, obj, objtype):
+      '''Support instance methods.'''
+      return partial(self.__call__, obj)
+
 
 # CRT from https://rosettacode.org/wiki/Chinese_remainder_theorem#Python      
 def chinese_remainder(n, a):
@@ -665,6 +705,17 @@ if __name__ == '__main__':
     #for i in tqdm(range(75)):
     #    sleep(0.01)
     #print()
+
+    # Memoization
+    print('-'*20)
+    print("Memoized")
+    print('-'*20)
+    @memoized
+    def fibonacci(n):
+        if n < 2:
+            return 1
+        return fibonacci(n-1) + fibonacci(n-2)
+    print('Fibonacci 100 =',fibonacci(100))
     
     # Number Theory
     print('-'*20)
@@ -893,3 +944,4 @@ __     _  __
     assert(p.dist(q) == 3)
     assert(len(h.neighbors(p)) == 6)
     assert(len(h.neighbors(p,validate=False)) == 6)
+
