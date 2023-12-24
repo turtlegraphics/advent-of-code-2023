@@ -370,6 +370,11 @@ class Point3d(Point):
         self.z /= scalar
         return self
 
+    def cross(self,b):
+        return Point3d(self.y*b.z - self.z*b.y,
+                       self.z*b.x - self.x*b.z,
+                       self.x*b.y - self.y*b.x)
+    
 class Turtle(Point):
     """A point that can move like a turtle."""
     def __init__(self,*args, **kwargs):
